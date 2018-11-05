@@ -1,0 +1,11 @@
+build/
+release/
+.vs
+*.in
+install/
+
+text.aux
+text.fls
+text.log
+text.out
+pdfa.xmpi
