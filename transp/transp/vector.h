@@ -18,7 +18,15 @@ class vector
 public:
     
     vector() : data_(new T[init_capacity]), size_(0), capacity_(init_capacity) {}
-        
+    vector(const vector<T> & other) : data_(new T[other.size_]), capacity_(other.capacity_), size_(other.size_)
+    {
+        memcpy(data_, other.data_, size_ * sizeof(T));
+    }
+    vector(vector<T> && other)  : data_(new T[other.size_]), capacity_(other.capacity_), size_(other.size_)
+    {
+        other.data_ = nullptr;
+    }
+    
     void push_back(const T & item);
     void push_back(T && item);
     
@@ -34,6 +42,7 @@ public:
     
     T & operator[](size_t i);
     
+    ~vector();
 private:
     void check_full_and_reserve();
 };
@@ -121,6 +130,13 @@ T & vector<T>::operator[](size_t i)
     
     return data_[i];
 }
+
+template<typename T>
+vector<T>::~vector()
+{
+    delete[] data_;
+}
+
 
 }
 

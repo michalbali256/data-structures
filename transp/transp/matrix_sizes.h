@@ -1,7 +1,11 @@
+#ifndef DATA_STRUCTURES_TRANSP_MATRIX_SIZES_H
+#define DATA_STRUCTURES_TRANSP_MATRIX_SIZES_H
+
+#include "stdlib.h"
 
 namespace transp
 {
-static size_t matrix_sizes[95] =
+static size_t matrix_sizes[103] =
 {
 	64, //k=54
 	70, //k=55
@@ -98,13 +102,9 @@ static size_t matrix_sizes[95] =
 	76450, //k=146     ~22 GiB
 	82571, //k=147     ~26 GiB
 	89181, //k=148     ~30 GiB
-	96321, //k=149     ~35 GiB
-	
-
-
-
-
+	96321  //k=149     ~35 GiB
+};
 
 }
 
-}
+#endif
