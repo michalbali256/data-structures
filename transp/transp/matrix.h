@@ -20,23 +20,22 @@ public:
 	
 	void transpose()
 	{
-		transpose(0,0, n_-1, n_-1);
+		transpose(0,0, n_);
 	}
 	
-	void transpose(size_t x1, size_t y1, size_t x2, size_t y2)
+	void transpose(size_t x1, size_t y1, size_t n)
 	{
-		size_t mx = x1 + (x2 - x1 + 1) / 2;
-		size_t my = y1 + (y2 - y1 + 1) / 2;
+		size_t mx = n / 2;
 		
-		if(mx == x1 && my == y1) 
+		if(n == 1) 
 		{
 			transpose_one(x1, y1);
 			return;
 		}
 		
-		transpose(x1, y1, mx, my);
-		transpose(mx + 1, my + 1, x2, y2);
-		transpose_and_swap(mx + 1, y1, x2, my);
+		transpose(x1, y1, mx);							//A
+		transpose_and_swap(x1 + mx, y1, n - mx, mx);    //B
+		transpose(x1 + mx, y1 + mx, n - mx);            //D
 	}
 	
 	void naive_transpose()
@@ -57,32 +56,27 @@ private:
 		swap(x, y, y, x);
 	}
 	
-	void transpose_and_swap(size_t x1, size_t y1, size_t x2, size_t y2)
+	void transpose_and_swap(size_t x1, size_t y1, size_t n, size_t m)
 	{
-		size_t mx = x1 + (x2 - x1) / 2;
-		size_t my = y1 + (y2 - y1) / 2;
+		size_t mx = n / 2;
+		size_t my = m / 2;
 		
-		if(mx <= x1+1 || my <= y1+1)
+		if(n == 1 || m == 1)
 		{
 			transpose_one(x1, y1);
-			if (mx == x1 && my == y1 + 1)
-			{
-				transpose_one(x1, y1 + 1);
-			}
-			else if (mx == x1 + 1 && my == y1)
-			{
-				transpose_one(x1 + 1, y1);
-			}
+			if (n == 2 || m == 2)
+				transpose_one(x1 + n - 1, y1 + m - 1);
 			return;
 		}
-		
-		transpose_and_swap(x1, y1, mx, my);
-		transpose_and_swap(mx + 1, y1, x2, my);
-		transpose_and_swap(x1, my +1, mx, y2);
-		transpose_and_swap(mx + 1, my + 1, x2, y2);
+
+		//A|B
+		//-+-
+		//C|D
+		transpose_and_swap(x1, y1, mx, my);                   //A
+		transpose_and_swap(x1 + mx, y1, n - mx, my);          //B
+		transpose_and_swap(x1, y1 + my, mx, m - my);          //C
+		transpose_and_swap(x1 + mx, y1 + my, n - mx, m - my); //D
 	}
-	
-	
 	
 	vector<uint32_t> * data_;
 	size_t n_;
