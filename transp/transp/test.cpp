@@ -23,10 +23,10 @@ int main(int argc, char * * argv)
 			check[i] = i;
 		}
 
-		matrix mt(&data, n);
+		matrix<noop_writer> mt(&data, n);
 		mt.transpose();
 
-		matrix mtn(&check, n);
+		matrix<noop_writer> mtn(&check, n);
 		mtn.naive_transpose();
 
 		for (size_t i = 0; i < n*n; ++i)

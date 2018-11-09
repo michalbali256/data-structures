@@ -5,9 +5,27 @@
 
 #include "vector.h"
 
+
+
 namespace transp
 {
 
+class writer
+{
+public:
+	static void log_swap(size_t x1, size_t y1, size_t x2, size_t y2)
+	{
+		std::cout << "X " << y1 << " " << x1 << " " << y2 << " " << x2 << "\n";
+	}
+};
+
+class noop_writer
+{
+public:
+	static void log_swap(size_t, size_t, size_t, size_t){}
+};
+
+template<class w>
 class matrix
 {
 public:
@@ -15,6 +33,7 @@ public:
 	
 	void swap(size_t x1, size_t y1, size_t x2, size_t y2)
 	{
+		w::log_swap(x1, y1, x2, y2);
 		std::swap((*data_)[y1*n_ + x1], (*data_)[y2*n_ + x2]);
 	}
 	
