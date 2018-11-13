@@ -48,10 +48,13 @@ public:
 		
 		if(n == 1) 
 		{
-			transpose_one(x1, y1);
+			//transpose_one(x1, y1);
 			return;
 		}
 		
+		//A|B
+		//-+-
+		//C|D
 		transpose(x1, y1, mx);							//A
 		transpose_and_swap(x1 + mx, y1, n - mx, mx);    //B
 		transpose(x1 + mx, y1 + mx, n - mx);            //D
