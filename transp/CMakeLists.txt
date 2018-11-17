@@ -77,7 +77,7 @@ add_custom_command(
 	DEPENDS results_simulator ${PROJECT_SOURCE_DIR}/plot_sim.py
 	)
 
-add_custom_target(sim_plot ALL DEPENDS sim.pdf)
+add_custom_target(sim_plot DEPENDS sim.pdf)
 
 add_custom_command(
 	OUTPUT time.pdf
@@ -85,10 +85,18 @@ add_custom_command(
 	DEPENDS results_time ${PROJECT_SOURCE_DIR}/plot_time.py
 	)
 
-add_custom_target(time_plot ALL DEPENDS time.pdf)
+add_custom_target(time_plot DEPENDS time.pdf)
 
 add_custom_command(
 	OUTPUT sim.pdf
 	COMMAND python ${PROJECT_SOURCE_DIR}/plot_sim.py
 	DEPENDS results_simulator ${PROJECT_SOURCE_DIR}/plot_sim.py
 	)
+
+add_custom_command(
+	OUTPUT text.pdf
+	COMMAND pdflatex ${PROJECT_SOURCE_DIR}/text.tex
+	DEPENDS ${PROJECT_SOURCE_DIR}/text.tex sim.pdf time.pdf
+	)
+
+add_custom_target(text ALL DEPENDS text.pdf)

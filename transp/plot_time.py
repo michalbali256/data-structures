@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 def loadplot(fnames, label_offset = 4, special = False, logx = False):
     fig, ax = plt.subplots()
     
+
     for fname in fnames:
         multis = []
         x = []
@@ -33,7 +34,9 @@ def loadplot(fnames, label_offset = 4, special = False, logx = False):
             ax.plot(x,y, label=fname[label_offset:])
         xlabel = "Veľkosť matice"
         if logx:
-            ax.set_xscale("log")
+            ax.set_xscale("log", basex=2)
+            plt.xticks(list(np.power(2, range(6,16))), list(np.power(2, range(6,18))))
+
             xlabel = xlabel + " (logaritmická mierka)"
         ax.set_xlabel(xlabel)
         ax.set_ylabel("Priemerný čas výmeny dvoch prvkov (ns)")
