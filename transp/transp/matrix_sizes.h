@@ -5,7 +5,7 @@
 
 namespace transp
 {
-static size_t matrix_sizes[103] =
+static constexpr size_t matrix_sizes[103] =
 {
 	64, //k=54
 	70, //k=55

@@ -22,7 +22,7 @@
       ],
       "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
-      "cmakeCommandArgs": "-DMAXMEMORY=142",
+      "cmakeCommandArgs": "-DMAXMEMORY=140",
 
       "buildCommandArgs": "-v",
       "ctestCommandArgs": ""

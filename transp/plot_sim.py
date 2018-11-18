@@ -50,7 +50,7 @@ for fname in fnames:
 ax.set_xscale("log", basex=2)
 ax.set_yscale("log")
 ax.set_xlabel("Veľkosť matice (logaritmická mierka)")
-ax.set_ylabel("Počet načítaných blokov na výmenu dvoch prvkov")
+ax.set_ylabel("Počet načítaných blokov na výmenu dvoch prvkov (logaritmická mierka)")
         
 
 box = ax.get_position()
@@ -62,6 +62,6 @@ ax.legend(loc='center',  bbox_to_anchor=(0.5, -0.13), #prop={'size': 5},
 #plt.xticks([])
 plt.xticks(list(np.power(2, range(6,14))), list(np.power(2, range(6,18))))
 plt.yticks([1, 0.1, 0.01],[1, 0.1, 0.01])
-plt.title("Simulacia")
+plt.title("Simulácia")
 plt.savefig("sim.pdf", format='pdf')
 plt.show()

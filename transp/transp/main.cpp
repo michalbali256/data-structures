@@ -65,7 +65,7 @@ int main(int argc, char * * argv)
 		size_t constexpr repeat_one = 5;
 		double measured[sizeof(matrix_sizes)][repeat_whole][repeat_one];
 		
-
+		//trasposition for each matrix size is done 25 times overall
 		for (size_t i = 0; i < repeat_whole; ++i)
 		{
 			for (size_t k = 0; k < (size_t)max_size; ++k)
@@ -75,7 +75,7 @@ int main(int argc, char * * argv)
 					size_t n = matrix_sizes[k];
 					vector<uint32_t> data;
 					data.resize(n*n);
-				
+
 					using namespace std::chrono;
 					high_resolution_clock::time_point start, end;
 
@@ -102,9 +102,7 @@ int main(int argc, char * * argv)
 			}
 		}
 
-		//std::cout << n << " " << time_span.count() * 1000000000 / (n*n) << "\n";
-		//std::cerr << n << " " << time_span.count() * 1000000000 / (n*n) << " ns" << "\n";
-
+		//statistic processing of the results
 		for (size_t k = 0; k < (size_t)max_size; ++k)
 		{
 			double sum = 0;
