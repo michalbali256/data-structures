@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
-find_package(PythonInterp)
+cmake_minimum_required(VERSION 3.9)
 
 
 add_subdirectory(transp)
@@ -73,7 +72,7 @@ add_custom_target(results_simulator DEPENDS res_naive_0064_0064 res_naive_0064_1
 
 add_custom_command(
 	OUTPUT sim.pdf
-	COMMAND python ${PROJECT_SOURCE_DIR}/plot_sim.py
+	COMMAND python3 ${PROJECT_SOURCE_DIR}/plot_sim.py
 	DEPENDS results_simulator ${PROJECT_SOURCE_DIR}/plot_sim.py
 	)
 
@@ -81,17 +80,11 @@ add_custom_target(sim_plot DEPENDS sim.pdf)
 
 add_custom_command(
 	OUTPUT time.pdf
-	COMMAND python ${PROJECT_SOURCE_DIR}/plot_time.py
+	COMMAND python3 ${PROJECT_SOURCE_DIR}/plot_time.py
 	DEPENDS results_time ${PROJECT_SOURCE_DIR}/plot_time.py
 	)
 
 add_custom_target(time_plot DEPENDS time.pdf)
-
-add_custom_command(
-	OUTPUT sim.pdf
-	COMMAND python ${PROJECT_SOURCE_DIR}/plot_sim.py
-	DEPENDS results_simulator ${PROJECT_SOURCE_DIR}/plot_sim.py
-	)
 
 add_custom_command(
 	OUTPUT text.pdf
