@@ -31,11 +31,14 @@ public:
     void push_back(T && item);
     
     size_t size();
-    
+	size_t capacity();
+
     void reserve(size_t new_capacity);
     void resize(size_t new_size);
     void resize(size_t new_size, const T & init_val);
     
+	void stretch_to_fit(size_t new_size, const T & init_val);
+
     void clear();
     
     T & back();
@@ -92,6 +95,7 @@ void vector<T>::resize(size_t new_size)
     size_ = new_size;
 }
 
+
 template<typename T>
 void vector<T>::resize(size_t new_size, const T & init_val)
 {
@@ -104,6 +108,15 @@ void vector<T>::resize(size_t new_size, const T & init_val)
 }
 
 template<typename T>
+void vector<T>::stretch_to_fit(size_t new_size, const T & init_val)
+{
+	while (new_size >= capacity_)
+		reserve(capacity_ * 2);
+	if (new_size >= size_)
+		resize(new_size + 1, init_val);
+}
+
+template<typename T>
 void vector<T>::clear()
 {
     size_ = 0;
@@ -113,6 +126,11 @@ template<typename T>
 size_t vector<T>::size()
 {
     return size_;
+}
+template<typename T>
+size_t vector<T>::capacity()
+{
+	return capacity_;
 }
 
 template<typename T>
