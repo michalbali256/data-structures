@@ -5,7 +5,7 @@
 #include "assert.h"
 #include "memory.h"
 
-namespace fibb
+namespace range
 {
 
 template<typename T>
