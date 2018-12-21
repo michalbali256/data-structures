@@ -4,6 +4,9 @@ project(range)
 
 add_executable(range
     main.cpp
+    range_tree.cpp
+    bba_tree.cpp
+    node.cpp
 )
 
 if(MSVC)
