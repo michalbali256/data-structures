@@ -15,8 +15,9 @@ public:
     
     
 private:
-    void rebuild();
-    
+    void rebuild(node * to_rebuild);
+	node * check_and_rebuild(size_t parent_size, node * child, node * to_insert);
+
     double alpha_;
     node * root_;
 };
