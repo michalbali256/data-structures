@@ -1,35 +1,21 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <set>
-
-#include <string.h>
+#include <vector>
 
 #include "range_tree.h"
 
 int main(int argc, char * * argv)
-{   
-	bool naive = false;
-
-	if (argc <= 1)
-	{
-		std::cout << "Enter prefix for files\n";
-		return 1;
-	}
-	size_t prefix_arg = 1;
-	if (argc > 1 && strcmp(argv[1], "-n") == 0)
-	{
-		naive = true;
-		++prefix_arg;
-	}
-
-	std::string prefix = argv[prefix_arg];
-
-
+{
 	std::ios_base::sync_with_stdio(false);
 	std::cin.tie(nullptr);
 
-	/*char c;
+	double alphas[3] = { 0.52, 0.7, 0.97 };
+
+	std::vector<range::range_tree> trees;
+	for(size_t i = 0; i < 3; ++i)
+		trees.push_back(range::range_tree(alphas[i]));
+
+	char c;
 	bool was = false;
 	while (!std::cin.eof())
 	{
@@ -40,22 +26,22 @@ int main(int argc, char * * argv)
 		assert(std::cin.good());
 		if (c == 'I')
 		{
-			std::cin >> id >> k;
+			range::data_t x, y;
+			std::cin >> x >> y;
 			if (std::cin.eof())
 				break;
 			assert(std::cin.good());
-			heap.insert(k, id);
+			for (size_t i = 0; i < 3; ++i)
+				trees[i].insert(x, y);
 		}
-		else if (c == 'M')
+		else if (c == 'C')
 		{
-			heap.delete_min();
-		}
-		else if (c == 'D')
-		{
-			std::cin >> id >> k;
+			range::data_t x1, y1, x2, y2;
+			std::cin >> x1 >> y1 >> x2 >> y2;
 			if (std::cin.eof())
 				break;
-			heap.decrease(id, k);
+			for (size_t i = 0; i < 3; ++i)
+				trees[i].range_count(x1, x2, y1, y2);
 		}
 		else if (c == '#')
 		{
@@ -63,20 +49,34 @@ int main(int argc, char * * argv)
 			std::cin >> n;
 			if (was)
 			{
-				decrease_max << heap.decrease_max() << "\n";
-				decrease_avg << heap.decrease_average() << "\n";
-				delete_max << heap.delete_max() << "\n";
-				delete_avg << heap.delete_average() << "\n";
-				heap.clear();
+				for (size_t i = 0; i < 3; ++i)
+					std::cout << trees[i].insert_avg() << " ";
+				for (size_t i = 0; i < 3; ++i)
+					std::cout << trees[i].insert_max() << " ";
+				for (size_t i = 0; i < 3; ++i)
+					std::cout << trees[i].count_avg() << " ";
+				for (size_t i = 0; i < 3; ++i)
+					std::cout << trees[i].count_max() << " ";
+				
+				std::cout << "\n";
+
+				for (size_t i = 0; i < 3; ++i)
+					trees[i].clear();
 			}
-			std::cout << n << "\n";
-			decrease_max << n << " ";
-			decrease_avg << n << " ";
-			delete_max << n << " ";
-			delete_avg << n << " ";
+			std::cout << n << " ";
 			was = true;
 		}
-	}*/
-	std::cout << "PROPER END\n";
+	}
+	for (size_t i = 0; i < 3; ++i)
+		std::cout << trees[i].insert_avg() << " ";
+	for (size_t i = 0; i < 3; ++i)
+		std::cout << trees[i].insert_max() << " ";
+	for (size_t i = 0; i < 3; ++i)
+		std::cout << trees[i].count_avg() << " ";
+	for (size_t i = 0; i < 3; ++i)
+		std::cout << trees[i].count_max() << " ";
+
+	std::cout << "\n";
+
 	return 0;
 }

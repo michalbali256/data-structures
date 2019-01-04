@@ -3,6 +3,7 @@
 
 #include <cstddef> 
 #include "bba_tree.h"
+#include "vector.h"
 
 namespace range
 {
@@ -23,20 +24,29 @@ struct node
     node * right;
     point data;
     size_t size;
-    virtual void insert(const point & p);
-    
-    virtual ~node() {}
+    virtual void insert(const point & p) = 0;
+	virtual void rebuild(const vector<node *> & nodes, size_t begin, size_t end) = 0;
+	virtual ~node() = 0;
+
+protected:
+	node(const point & p, data_t key) : key(key), data(p), left(), right(), size() {}
 };
 struct x_node : public node
 {
+	x_node(const point & p, double alpha) : node(p, p.x), y_tree(alpha) {}
+
     bba_tree y_tree;
     
     virtual void insert(const point & p) override;
+	virtual void rebuild(const vector<node *> & nodes, size_t begin, size_t end) override;
 };
 
 struct y_node : public node
 {
-    virtual void insert(const point & p) override {}
+	y_node(const point & p) : node(p, p.y) {}
+
+    virtual void insert(const point & ) override {}
+	virtual void rebuild(const vector<node *> &, size_t, size_t) override {};
 };    
 
     

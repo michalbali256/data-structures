@@ -2,6 +2,7 @@
 #define DATA_STRUCTURES_SPLAY_VECTOR_H
 
 #include <stdint.h>
+#include <utility>
 #include "assert.h"
 #include "memory.h"
 
@@ -30,8 +31,10 @@ public:
     void push_back(const T & item);
     void push_back(T && item);
     
-    size_t size();
-	size_t capacity();
+	T pop_back();
+
+    size_t size() const;
+	size_t capacity() const;
 
     void reserve(size_t new_capacity);
     void resize(size_t new_size);
@@ -44,7 +47,7 @@ public:
     T & back();
     
     T & operator[](size_t i);
-    
+	const T & operator[](size_t i) const;
     ~vector();
 private:
     void check_full_and_reserve();
@@ -65,6 +68,15 @@ void vector<T>::push_back(T && item)
     data_[size_] = std::move(item);
     ++size_;
 }
+
+template<typename T>
+T vector<T>::pop_back()
+{
+	assert(size_ > 0);
+	size_--;
+	return data_[size_];
+}
+
 
 template<typename T>
 void vector<T>::check_full_and_reserve()
@@ -123,12 +135,12 @@ void vector<T>::clear()
 }
 
 template<typename T>
-size_t vector<T>::size()
+size_t vector<T>::size() const
 {
     return size_;
 }
 template<typename T>
-size_t vector<T>::capacity()
+size_t vector<T>::capacity() const
 {
 	return capacity_;
 }
@@ -147,6 +159,15 @@ T & vector<T>::operator[](size_t i)
     assert(i < size_);
     
     return data_[i];
+}
+
+template<typename T>
+const T & vector<T>::operator[](size_t i) const
+{
+	assert(i >= 0);
+	assert(i < size_);
+
+	return data_[i];
 }
 
 template<typename T>
