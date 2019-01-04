@@ -1,7 +1,7 @@
 #include "node.h"
 #include "bba_tree.h"
 #include "vector.h"
-
+#include <utility>
 
 namespace range
 {
@@ -11,29 +11,23 @@ void x_node::insert(const point & p)
 	y_tree.insert(y_point);
 }
 
-template<typename T>
-void swap(T & a, T & b)
-{
-	T & tmp = a;
-	a = b;
-	b = tmp;
-}
-
 void sort(vector<node *> & nodes, size_t begin, size_t end)
 {
 	if (end - begin <= 1)
 		return;
 	
-	data_t pivot = nodes[begin]->key;
+	data_t pivot = nodes[end - 1]->key;
 	size_t lower = begin;
-	for (size_t i = begin; i < end; ++i)
+	for (size_t i = begin; i < end - 1; ++i)
 	{
 		if (nodes[i]->key < pivot)
-			swap(nodes[lower++], nodes[i]);
+			std::swap(nodes[lower++], nodes[i]);
 	}
 
+	std::swap(nodes[lower], nodes[end - 1]);
+
 	sort(nodes, begin, lower);
-	sort(nodes, lower, end);
+	sort(nodes, lower+1, end);
 }
 
 void x_node::rebuild(const vector<node *> & nodes, size_t begin, size_t end)
