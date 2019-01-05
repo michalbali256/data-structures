@@ -15,17 +15,17 @@ class bba_tree
 public:
     bba_tree(double alpha) : alpha_(alpha) {}
 
-    void insert(node * p);
+    void insert(node * p, size_t & steps);
 	void clear();
 	void build_from_sorted(vector<node *> & nodes);
 
-	size_t range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end) const;
+	size_t range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end, size_t & steps) const;
 
 	static bool in_range(data_t x, data_t begin, data_t end);
 
 	~bba_tree();
 private:
-    void rebuild(node *& to_rebuild);
+    void rebuild(node *& to_rebuild, size_t & steps);
 	bool check_bba_invariant(node * n);
 
     double alpha_;

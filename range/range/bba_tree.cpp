@@ -6,7 +6,7 @@
 namespace range
 {
 
-void rebuild_nodes(const vector<node *> & nodes, node *& parent_child_ref, size_t begin, size_t end)
+void rebuild_nodes(const vector<node *> & nodes, node *& parent_child_ref, size_t begin, size_t end, size_t & steps)
 {
 	if (begin == end)
 	{
@@ -20,19 +20,21 @@ void rebuild_nodes(const vector<node *> & nodes, node *& parent_child_ref, size_
 		nodes[begin]->left = nullptr;
 		nodes[begin]->right = nullptr;
 		nodes[begin]->size = 1;
-		nodes[begin]->rebuild(nodes, begin, end);
+		nodes[begin]->rebuild(nodes, begin, end, steps);
+		++steps;
 		return;
 	}
 	size_t mid = (begin + end) / 2;
 
 	parent_child_ref = nodes[mid];
 	nodes[mid]->size = end - begin;
-	nodes[mid]->rebuild(nodes, begin, end);
-	rebuild_nodes(nodes, nodes[mid]->left, begin, mid);
-	rebuild_nodes(nodes, nodes[mid]->right, mid + 1, end);
+	++steps;
+	nodes[mid]->rebuild(nodes, begin, end, steps);
+	rebuild_nodes(nodes, nodes[mid]->left, begin, mid, steps);
+	rebuild_nodes(nodes, nodes[mid]->right, mid + 1, end, steps);
 }
 
-void bba_tree::rebuild(node *& to_rebuild)
+void bba_tree::rebuild(node *& to_rebuild, size_t & steps)
 {
 	assert(to_rebuild);
 	//now take all child points, put them into array
@@ -67,7 +69,7 @@ void bba_tree::rebuild(node *& to_rebuild)
 	} /* end of while */
 
 	assert(sorted.size() == to_rebuild->size);
-	rebuild_nodes(sorted, to_rebuild, 0, sorted.size());
+	rebuild_nodes(sorted, to_rebuild, 0, sorted.size(), steps);
 }
 
 bool bba_tree::check_bba_invariant(node * n)
@@ -109,28 +111,31 @@ node *& next_child(node * n, node * p)
 	return next_child(n, p->key);
 }
 
-void set_inserted_node(node * n)
+void set_inserted_node(node * n, size_t & steps)
 {
 	n->left = nullptr;
 	n->right = nullptr;
 	n->size = 1;
-	n->insert(n->data);
+	++steps;
+	n->insert(n->data, steps);
+	
 }
 
 
-void bba_tree::insert(node * p)
+void bba_tree::insert(node * p, size_t & steps)
 {
     if(root_ == nullptr)
     {
         root_ = p;
-		set_inserted_node(p);
+		set_inserted_node(p, steps);
         return;
     }
     
-	node ** parent = &root_;
+	node ** parent = &root_; 
 	node ** child = &next_child(*parent, p);
-	
-	(*parent)->insert(p->data);
+	++steps; //we visited root
+
+	(*parent)->insert(p->data, steps);
 	++(*parent)->size;
 
 	node ** rebuild_root = &root_;
@@ -141,9 +146,10 @@ void bba_tree::insert(node * p)
     while(*child)
     {
 		
-		(*child)->insert(p->data);
+		(*child)->insert(p->data, steps);
 		++(*child)->size;
 		
+
 		if (!do_rebuild && !check_bba_invariant(*parent))
 		{
 			do_rebuild = true;
@@ -152,14 +158,15 @@ void bba_tree::insert(node * p)
 
         parent = child;
 		child = &next_child(*parent, p);
+		++steps; //we visited child
     }
 
 	*child = p;
-	set_inserted_node(*child);
+	set_inserted_node(*child, steps);
 	//no need to check invariant, changed size from 0 to 1
 
 	if (do_rebuild)
-		rebuild(*rebuild_root);
+		rebuild(*rebuild_root, steps);
 }
 
 void bba_tree::clear()
@@ -171,7 +178,10 @@ void bba_tree::clear()
 
 void bba_tree::build_from_sorted(vector<node *> & nodes)
 {
-	rebuild_nodes(nodes, root_, 0, nodes.size());
+	size_t steps = 0;
+	rebuild_nodes(nodes, root_, 0, nodes.size(), steps);
+	assert(steps == nodes.size());
+	//this is only used when building y tree - that steps are counted elsewhere
 }
 
 bool bba_tree::in_range(data_t x, data_t begin, data_t end)
@@ -179,11 +189,12 @@ bool bba_tree::in_range(data_t x, data_t begin, data_t end)
 	return x >= begin && x <= end;
 }
 
-size_t l_count(node * l_path, data_t begin, data_t, data_t y_begin, data_t y_end)
+size_t l_count(node * l_path, data_t begin, data_t, data_t y_begin, data_t y_end, size_t & steps)
 {
 	size_t count = 0;
 	while(l_path)
 	{
+		++steps;
 		if (begin > l_path->key)
 		{
 			l_path = l_path->right;
@@ -193,7 +204,7 @@ size_t l_count(node * l_path, data_t begin, data_t, data_t y_begin, data_t y_end
 			if (l_path->y_satisfies(y_begin, y_end))
 				++count;
 			if (l_path->right)
-				count += l_path->right->count(y_begin, y_end);
+				count += l_path->right->count(y_begin, y_end, steps);
 			l_path = l_path->left;
 		}
 
@@ -202,17 +213,18 @@ size_t l_count(node * l_path, data_t begin, data_t, data_t y_begin, data_t y_end
 	return count;
 }
 
-size_t r_count(node * r_path, data_t, data_t end, data_t y_begin, data_t y_end)
+size_t r_count(node * r_path, data_t, data_t end, data_t y_begin, data_t y_end, size_t & steps)
 {
 	size_t count = 0;
 	while (r_path)
 	{
+		++steps;
 		if (end >= r_path->key)
 		{
 			if (r_path->y_satisfies(y_begin, y_end))
 				++count;
 			if (r_path->left)
-				count += r_path->left->count(y_begin, y_end);
+				count += r_path->left->count(y_begin, y_end, steps);
 			r_path = r_path->right;
 		}
 		else
@@ -225,7 +237,7 @@ size_t r_count(node * r_path, data_t, data_t end, data_t y_begin, data_t y_end)
 	return count;
 }
 
-size_t bba_tree::range_count(data_t begin, data_t end, data_t y_begin, data_t y_end) const
+size_t bba_tree::range_count(data_t begin, data_t end, data_t y_begin, data_t y_end, size_t & steps) const
 {
 	node * l_path = root_;
 	node * r_path = root_;
@@ -240,17 +252,19 @@ size_t bba_tree::range_count(data_t begin, data_t end, data_t y_begin, data_t y_
 		{
 			if (l_path->y_satisfies(y_begin, y_end))
 				++count;
+			++steps;
 			break;
 		}
 		l_path = next_child(l_path, begin);
 		r_path = next_child(r_path, end);
+		++steps;
 	}
 
 	l_path = next_child(l_path, begin);
 	r_path = next_child(r_path, end);
 
-	count += l_count(l_path, begin, end, y_begin, y_end);
-	count += r_count(r_path, begin, end, y_begin, y_end);
+	count += l_count(l_path, begin, end, y_begin, y_end, steps);
+	count += r_count(r_path, begin, end, y_begin, y_end, steps);
 
 	return count;
 

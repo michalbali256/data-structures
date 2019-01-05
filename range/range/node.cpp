@@ -5,10 +5,10 @@
 
 namespace range
 {
-void x_node::insert(const point & p)
+void x_node::insert(const point & p, size_t & steps)
 {
 	y_node * y_point = new y_node(p);
-	y_tree.insert(y_point);
+	y_tree.insert(y_point, steps);
 }
 
 void sort(vector<node *> & nodes, size_t begin, size_t end)
@@ -32,7 +32,7 @@ void sort(vector<node *> & nodes, size_t begin, size_t end)
 	sort(nodes, lower+1, end);
 }
 
-void x_node::rebuild(const vector<node *> & nodes, size_t begin, size_t end)
+void x_node::rebuild(const vector<node *> & nodes, size_t begin, size_t end, size_t & steps)
 {
 	y_tree.clear();
 
@@ -46,8 +46,9 @@ void x_node::rebuild(const vector<node *> & nodes, size_t begin, size_t end)
 	}
 
 	sort(y_nodes, 0, y_nodes.size());
-
+	
 	y_tree.build_from_sorted(y_nodes);
+	steps += end - begin; //we created that much nodes and visited them all during rebuild
 }
 
 bool x_node::y_satisfies(data_t y_begin, data_t y_end)
@@ -55,9 +56,9 @@ bool x_node::y_satisfies(data_t y_begin, data_t y_end)
 	return bba_tree::in_range(data.y, y_begin, y_end);
 }
 
-size_t x_node::count(data_t y_begin, data_t y_end)
+size_t x_node::count(data_t y_begin, data_t y_end, size_t & steps)
 {
-	return y_tree.range_count(y_begin, y_end, 0, 0);
+	return y_tree.range_count(y_begin, y_end, 0, 0, steps);
 	//the y_begin and y_end are never used in the y tree
 }
 

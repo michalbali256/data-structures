@@ -7,21 +7,38 @@ add_subdirectory(generator)
 
 set(STUDENT_ID 72)
 
-#add_custom_command(
-#	OUTPUT p_naive_decrease_max p_naive_decrease_avg p_naive_delete_avg p_naive_delete_max
-#	COMMAND \( \"$<TARGET_FILE:generator>\" -p -s ${STUDENT_ID} | \"$<TARGET_FILE:fibb>\" -n p \)
-#	DEPENDS fibb generator
-#	)
+add_custom_command(
+	OUTPUT q.in
+	COMMAND generator -s ${STUDENT_ID} -q > q.in
+	DEPENDS generator
+	)
 
-#add_custom_target(results DEPENDS r_stand_decrease_max b_stand_decrease_max x_stand_decrease_max
-#x_naive_decrease_max p_stand_decrease_max p_naive_decrease_max)
+add_custom_command(
+	OUTPUT u.in
+	COMMAND generator -s ${STUDENT_ID} -u > u.in
+	DEPENDS generator
+	)
 
-#add_custom_command(
-#	OUTPUT 1.pdf
-#	COMMAND python3 ${PROJECT_SOURCE_DIR}/plot.py
-#	DEPENDS results ${PROJECT_SOURCE_DIR}/plot.py
-#	)
-#add_custom_target(plots ALL DEPENDS 1.pdf)
+add_custom_command(
+	OUTPUT res_u
+	COMMAND range < u.in > res_u
+	DEPENDS range u.in
+	)
+
+add_custom_command(
+	OUTPUT res_q
+	COMMAND range < q.in > res_q
+	DEPENDS range q.in
+	)
+
+add_custom_target(results DEPENDS res_q res_u)
+
+add_custom_command(
+	OUTPUT 1.pdf
+	COMMAND python3 ${PROJECT_SOURCE_DIR}/plot.py
+	DEPENDS results ${PROJECT_SOURCE_DIR}/plot.py
+	)
+add_custom_target(plots ALL DEPENDS 1.pdf)
 
 #add_custom_command(
 #	OUTPUT res_time_obl
