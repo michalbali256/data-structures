@@ -8,6 +8,8 @@ namespace range
 
 struct node;
 
+using data_t = size_t;
+
 class bba_tree
 {
 public:
@@ -16,6 +18,10 @@ public:
     void insert(node * p);
 	void clear();
 	void build_from_sorted(vector<node *> & nodes);
+
+	size_t range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end) const;
+
+	static bool in_range(data_t x, data_t begin, data_t end);
 
 	~bba_tree();
 private:

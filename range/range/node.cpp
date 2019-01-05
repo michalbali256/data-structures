@@ -15,8 +15,10 @@ void sort(vector<node *> & nodes, size_t begin, size_t end)
 {
 	if (end - begin <= 1)
 		return;
-	
-	data_t pivot = nodes[end - 1]->key;
+	size_t mid = (begin + end) / 2;
+
+	data_t pivot = nodes[mid]->key;
+	std::swap(nodes[mid], nodes[end - 1]);
 	size_t lower = begin;
 	for (size_t i = begin; i < end - 1; ++i)
 	{
@@ -46,6 +48,17 @@ void x_node::rebuild(const vector<node *> & nodes, size_t begin, size_t end)
 	sort(y_nodes, 0, y_nodes.size());
 
 	y_tree.build_from_sorted(y_nodes);
+}
+
+bool x_node::y_satisfies(data_t y_begin, data_t y_end)
+{
+	return bba_tree::in_range(data.y, y_begin, y_end);
+}
+
+size_t x_node::count(data_t y_begin, data_t y_end)
+{
+	return y_tree.range_count(y_begin, y_end, 0, 0);
+	//the y_begin and y_end are never used in the y tree
 }
 
 node::~node()

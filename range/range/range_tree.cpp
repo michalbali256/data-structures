@@ -8,9 +8,9 @@ void range_tree::insert(data_t x, data_t y)
 	x_tree.insert(new x_node({x, y}, alpha_));
 }
 
-void range_tree::range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end)
+size_t range_tree::range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end)
 {
-    
+	return x_tree.range_count(x_begin, x_end, y_begin, y_end);
 }
 
 double range_tree::insert_avg()
@@ -35,6 +35,8 @@ uint64_t range_tree::count_max()
 
 void range_tree::clear()
 {
+	x_tree.clear();
+
 	insert_steps_ = 0;
 	insert_count_ = 0;
 	insert_max_ = 0;

@@ -18,7 +18,7 @@ public:
 	range_tree(double alpha) : x_tree(alpha), alpha_(alpha) {}
 
     void insert(data_t x, data_t y);
-    void range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end);
+    size_t range_count(data_t x_begin, data_t x_end, data_t y_begin, data_t y_end);
 
 	double insert_avg();
 	uint64_t insert_max();

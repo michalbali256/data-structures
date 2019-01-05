@@ -15,11 +15,13 @@ int main(int argc, char * * argv)
 	for(size_t i = 0; i < 3; ++i)
 		trees.push_back(range::range_tree(alphas[i]));
 
+	std::vector<range::point> check_arr;
+
 	char c;
 	bool was = false;
 	while (!std::cin.eof())
 	{
-		
+		size_t n = 0;
 		std::cin >> c;
 		if (std::cin.eof())
 			break;
@@ -33,6 +35,8 @@ int main(int argc, char * * argv)
 			assert(std::cin.good());
 			for (size_t i = 0; i < 3; ++i)
 				trees[i].insert(x, y);
+
+			check_arr.push_back({ x,y });
 		}
 		else if (c == 'C')
 		{
@@ -40,13 +44,35 @@ int main(int argc, char * * argv)
 			std::cin >> x1 >> y1 >> x2 >> y2;
 			if (std::cin.eof())
 				break;
+
+			size_t count = 0;
+			for (range::point p : check_arr)
+			{
+				if (p.x >= x1 && p.x <= x2 && p.y >= y1 && p.y <= y2)
+					++count;
+			}
+
 			for (size_t i = 0; i < 3; ++i)
-				trees[i].range_count(x1, x2, y1, y2);
+			{
+				if (trees[i].range_count(x1, x2, y1, y2) != count)
+				{
+					std::cout << "WRONG " << n << "\n";
+				}
+				/*
+				size_t ret = trees[i].range_count(x1, x2, y1, y2);
+				assert(ret == count);*/
+			}
+
+			
+
 		}
 		else if (c == '#')
 		{
-			size_t n;
+			
 			std::cin >> n;
+
+			check_arr.reserve(n);
+
 			if (was)
 			{
 				for (size_t i = 0; i < 3; ++i)
@@ -62,6 +88,8 @@ int main(int argc, char * * argv)
 
 				for (size_t i = 0; i < 3; ++i)
 					trees[i].clear();
+
+				check_arr.resize(0);
 			}
 			std::cout << n << " ";
 			was = true;

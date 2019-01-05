@@ -92,9 +92,9 @@ bool bba_tree::check_bba_invariant(node * n)
 	return true;
 }
 
-node *& next_child(node * n, node * p)
+node *& next_child(node * n, data_t d)
 {
-	if (p->key > n->key)
+	if (d > n->key)
 	{
 		return n->right;
 	}
@@ -102,6 +102,11 @@ node *& next_child(node * n, node * p)
 	{
 		return n->left;
 	}
+}
+
+node *& next_child(node * n, node * p)
+{
+	return next_child(n, p->key);
 }
 
 void set_inserted_node(node * n)
@@ -145,7 +150,6 @@ void bba_tree::insert(node * p)
 			rebuild_root = parent;
 		}
 
-
         parent = child;
 		child = &next_child(*parent, p);
     }
@@ -168,6 +172,88 @@ void bba_tree::clear()
 void bba_tree::build_from_sorted(vector<node *> & nodes)
 {
 	rebuild_nodes(nodes, root_, 0, nodes.size());
+}
+
+bool bba_tree::in_range(data_t x, data_t begin, data_t end)
+{
+	return x >= begin && x <= end;
+}
+
+size_t l_count(node * l_path, data_t begin, data_t, data_t y_begin, data_t y_end)
+{
+	size_t count = 0;
+	while(l_path)
+	{
+		if (begin > l_path->key)
+		{
+			l_path = l_path->right;
+		}
+		else
+		{
+			if (l_path->y_satisfies(y_begin, y_end))
+				++count;
+			if (l_path->right)
+				count += l_path->right->count(y_begin, y_end);
+			l_path = l_path->left;
+		}
+
+	}
+
+	return count;
+}
+
+size_t r_count(node * r_path, data_t, data_t end, data_t y_begin, data_t y_end)
+{
+	size_t count = 0;
+	while (r_path)
+	{
+		if (end >= r_path->key)
+		{
+			if (r_path->y_satisfies(y_begin, y_end))
+				++count;
+			if (r_path->left)
+				count += r_path->left->count(y_begin, y_end);
+			r_path = r_path->right;
+		}
+		else
+		{
+			r_path = r_path->left;
+		}
+
+	}
+
+	return count;
+}
+
+size_t bba_tree::range_count(data_t begin, data_t end, data_t y_begin, data_t y_end) const
+{
+	node * l_path = root_;
+	node * r_path = root_;
+
+	size_t count = 0;
+
+	for(;;)
+	{
+		if (!l_path && !r_path)
+			return 0;
+		else if (in_range(l_path->key, begin, end))
+		{
+			if (l_path->y_satisfies(y_begin, y_end))
+				++count;
+			break;
+		}
+		l_path = next_child(l_path, begin);
+		r_path = next_child(r_path, end);
+	}
+
+	l_path = next_child(l_path, begin);
+	r_path = next_child(r_path, end);
+
+	count += l_count(l_path, begin, end, y_begin, y_end);
+	count += r_count(r_path, begin, end, y_begin, y_end);
+
+	return count;
+
 }
 
 bba_tree::~bba_tree()

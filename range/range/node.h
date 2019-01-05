@@ -8,10 +8,11 @@
 namespace range
 {
 
-using data_t = size_t;
+
 
 struct point
 {
+	point() : x(), y() {}
     point(data_t x, data_t y) : x(x), y(y) {}
     data_t x;
     data_t y;
@@ -26,6 +27,9 @@ struct node
     size_t size;
     virtual void insert(const point & p) = 0;
 	virtual void rebuild(const vector<node *> & nodes, size_t begin, size_t end) = 0;
+
+	virtual bool y_satisfies(data_t y_begin, data_t y_end) = 0;
+	virtual size_t count(data_t y_begin, data_t y_end) = 0;
 	virtual ~node() = 0;
 
 protected:
@@ -39,6 +43,9 @@ struct x_node : public node
     
     virtual void insert(const point & p) override;
 	virtual void rebuild(const vector<node *> & nodes, size_t begin, size_t end) override;
+	virtual bool y_satisfies(data_t y_begin, data_t y_end) override;
+	virtual size_t count(data_t y_begin, data_t y_end) override;
+
 };
 
 struct y_node : public node
@@ -47,6 +54,8 @@ struct y_node : public node
 
     virtual void insert(const point & ) override {}
 	virtual void rebuild(const vector<node *> &, size_t, size_t) override {};
+	virtual bool y_satisfies(data_t, data_t) override { return true; };
+	virtual size_t count(data_t, data_t) override { return size; };
 };    
 
     
